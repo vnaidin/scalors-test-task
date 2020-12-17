@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
 import Collapse from '@material-ui/core/Collapse';
 import ListIcon from '@material-ui/icons/List';
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
 import Tooltip from '@material-ui/core/Tooltip';
+import TextField from '@material-ui/core/TextField';
 
-import DevicesList from './DevicesList';
-import UsersList from './UsersList';
+import DevicesList from './SubComponents/DevicesList';
+import UsersList from './SubComponents/UsersList';
 
-function ProjectsList({ project, edit }) {
+function Project({ project, deleteItem }) {
 	const [open, setOpen] = useState(false);
 	const [editMode, setEditMode] = useState(false);
 
@@ -19,6 +22,7 @@ function ProjectsList({ project, edit }) {
 			style={{
 				display: 'grid',
 				gridAutoFlow: 'row',
+				border: open ? '1px solid black' : 'none',
 			}}
 		>
 			<ListItem
@@ -29,25 +33,42 @@ function ProjectsList({ project, edit }) {
 					gridTemplateColumns: 'repeat(auto-fill, 250px) ',
 				}}
 			>
-				<ListItemText primary={`Title: ${project.title}`} />
-				<ListItemText
-					primary={`Start Date: ${new Date(
-						project.beginDate,
-					).toLocaleDateString()}`}
-				/>
-				<ListItemText
-					primary={`Expiration Date: ${
+				<TextField
+					label={`Title: `}
+					defaultValue={project.title}
+					disabled={!editMode}
+					color='secondary'
+				></TextField>
+
+				<TextField
+					label={`Start Date: `}
+					defaultValue={new Date(project.beginDate).toLocaleDateString()}
+					disabled={!editMode}
+					color='secondary'
+				></TextField>
+				<TextField
+					label={`Expiration Date: `}
+					defaultValue={
 						project.expirationDate
 							? new Date(project.expirationDate).toLocaleDateString()
 							: 'not stated'
-					}`}
-				/>
-				<Tooltip title='Show More Information!'>
-					<ListIcon
-						onClick={() => {
-							setOpen(!open);
-						}}
-					/>
+					}
+					disabled={!editMode}
+					color='secondary'
+				></TextField>
+				<Tooltip
+					title='Show More Information!'
+					onClick={() => {
+						setOpen(!open);
+					}}
+				>
+					{open ? <ArrowUpwardIcon /> : <ListIcon />}
+				</Tooltip>
+				<Tooltip title='Edit'>
+					<EditIcon onClick={() => setEditMode(!editMode)} />
+				</Tooltip>
+				<Tooltip title='Delete'>
+					<DeleteIcon onClick={() => deleteItem(project.id)} />
 				</Tooltip>
 			</ListItem>
 			<Collapse in={open} timeout='auto' unmountOnExit>
@@ -58,4 +79,4 @@ function ProjectsList({ project, edit }) {
 	);
 }
 
-export default ProjectsList;
+export default Project;
